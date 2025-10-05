@@ -1,0 +1,41 @@
+name: Model Training CI
+
+on:
+  push:
+    branches: [ kernelridge ]
+  pull_request:
+    branches: [ kernelridge ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run Decision Tree Model
+      run: |
+        echo "=== Running Decision Tree Model ==="
+        python train.py
+        
+    - name: Run Kernel Ridge Model
+      run: |
+        echo "=== Running Kernel Ridge Model ==="
+        python train2.py
+        
+    - name: Generate Performance Comparison Report
+      run: |
+        echo "=== Generating Performance Comparison Report ==="
+        python compare_models.py
